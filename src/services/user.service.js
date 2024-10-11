@@ -24,9 +24,10 @@ const createUser = async (userData) => {
 
 const findUserById = async (userId) => {
   try {
-    const user = await User.findById(userId).populate("address");
+    const user = await User.findById(userId);
+    // .populate("address");
     if (!user) {
-      throw new Error("user not found with id: ", userId);
+      throw new Error(`User not found with id: ${userId}`);
     }
     return user;
   } catch (error) {
@@ -38,7 +39,7 @@ const getUserByEmail = async (email) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error("user not found with email: ", email);
+      throw new Error(`User not found with email: ${email}`);
     }
     return user;
   } catch (error) {
@@ -48,7 +49,7 @@ const getUserByEmail = async (email) => {
 
 const getUserProfileByToken = async (token) => {
   try {
-    const userId = jwtProvider.getUserIdFromToken;
+    const userId = jwtProvider.getUserIdFromToken(token);
 
     const user = await findUserById(userId);
 

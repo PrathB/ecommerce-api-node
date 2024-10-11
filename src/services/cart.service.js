@@ -2,7 +2,7 @@ const Cart = require("../models/cart.model");
 
 async function createCart(user) {
   try {
-    const cart = new Cart({ user });
+    const cart = new Cart({ userId: user._id });
     const createdCart = await cart.save();
     return createdCart;
   } catch (error) {

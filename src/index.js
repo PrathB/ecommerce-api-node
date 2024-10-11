@@ -13,11 +13,11 @@ app.get("/", (req, res) => {
     .send({ message: "welcome to ecommerce api", status: true });
 });
 
-const authRouters = require("./routes/auth.route");
-app.use("/auth", authRouters);
+const authRoutes = require("./routes/auth.route");
+app.use("/auth", authRoutes);
 
-const userRouters = require("./routes/user.route");
-app.use("/users", userRouters);
+const userRoutes = require("./routes/user.route");
+app.use("/api/users", userRoutes);
 module.exports = app;
 
 app;
