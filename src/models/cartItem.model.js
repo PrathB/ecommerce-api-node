@@ -17,6 +17,7 @@ const cartItemSchema = new Schema({
     default: 1,
     required: true,
   },
+  // price for given quantity of product
   price: {
     type: Number,
     required: true,

@@ -2,9 +2,9 @@ const Cart = require("../models/cart.model");
 const CartItem = require("../models/cartItem.model");
 const Product = require("../models/product.model");
 
-async function createCart(user) {
+async function createCart(userId) {
   try {
-    const cart = new Cart({ userId: user._id });
+    const cart = new Cart({ userId: userId });
     const createdCart = await cart.save();
     return createdCart;
   } catch (error) {
@@ -27,7 +27,7 @@ async function findUserCart(userId) {
 
     for (let cartItem of cart.cartItems) {
       totalItems += cartItem.quantity;
-      subTotalPrice += cartItem.price * cartItem.quantity;
+      subTotalPrice += cartItem.price;
     }
 
     // shippingCost calculation
@@ -40,7 +40,7 @@ async function findUserCart(userId) {
 
     return cart;
   } catch (error) {
-    throw new Error(errror.message);
+    throw new Error(error.message);
   }
 }
 
@@ -49,6 +49,9 @@ async function addCartItem(userId, req) {
   try {
     const cart = await Cart.findOne({ userId: userId });
     const product = await Product.findOne(req.productId);
+    if (!product) {
+      throw new Error("Invalid product Id: ", req.productId);
+    }
 
     const isCartItemCreated = await CartItem.findOne({
       cartId: cart._id,
@@ -61,7 +64,7 @@ async function addCartItem(userId, req) {
         cartId: cart._id,
         product: product._id,
         quantity: req.quantity,
-        price: product.discountedPrice,
+        price: product.discountedPrice * req.quantity,
         userId: userId,
       });
       // adding to cart
