@@ -48,4 +48,62 @@ async function createOrder(userId, shippingAddress) {
   return savedOrder;
 }
 
-module.exports = { createOrder };
+// for admin
+async function placeOrder(orderId) {
+  const order = await findOrderById(orderId);
+  order.paymentDetails.paymentStatus = "COMPLETED";
+  order.orderStatus = "PLACED";
+
+  return await order.save();
+}
+
+// for admin
+async function confirmOrder(orderId) {
+  const order = await findOrderById(orderId);
+  order.orderStatus = "CONFIRMED";
+
+  return await order.save();
+}
+
+// for admin
+async function shipOrder(orderId) {
+  const order = await findOrderById(orderId);
+  order.orderStatus = "SHIPPED";
+
+  return await order.save();
+}
+
+// for admin
+async function deliverOrder(orderId) {
+  const order = await findOrderById(orderId);
+  order.orderStatus = "DELIVERED";
+
+  return await order.save();
+}
+
+// for admin
+async function cancelOrder(orderId) {
+  const order = await findOrderById(orderId);
+  order.orderStatus = "CANCELLED";
+
+  return await order.save();
+}
+
+async function findOrderById(orderId) {
+  const order = await Order.findById(orderId)
+    .populate("userId")
+    .populate("shippingAddress")
+    .populate({ path: "orderItems", populate: { path: "product" } });
+
+  return order;
+}
+
+module.exports = {
+  createOrder,
+  placeOrder,
+  confirmOrder,
+  shipOrder,
+  deliverOrder,
+  cancelOrder,
+  findOrderById,
+};
