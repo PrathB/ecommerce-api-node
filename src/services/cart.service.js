@@ -2,6 +2,7 @@ const Cart = require("../models/cart.model");
 const CartItem = require("../models/cartItem.model");
 const Product = require("../models/product.model");
 
+// function to create cart when user registers
 async function createCart(userId) {
   try {
     const cart = new Cart({ userId: userId });
