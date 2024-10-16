@@ -122,6 +122,7 @@ async function getAllOrders() {
 
 async function deleteOrder(orderId) {
   await Order.findByIdAndDelete(orderId);
+  return "Order deleted succesfully";
 }
 
 module.exports = {
