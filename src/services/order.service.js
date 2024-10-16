@@ -98,6 +98,32 @@ async function findOrderById(orderId) {
   return order;
 }
 
+// fxn for user to view order history
+async function getUserOrderHistory(userId) {
+  try {
+    const orders = await Order.find({
+      userId: userId,
+      orderStatus: { $in: ["PLACED", "CONFIRMED", "SHIPPED", "DELIVERED"] },
+    })
+      .populate({ path: "orderItems", populate: { path: "product" } })
+      .lean();
+    return orders;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+// fxn for admin to get all orders
+async function getAllOrders() {
+  return await Order.find()
+    .populate({ path: "orderItems", populate: { path: "product" } })
+    .lean();
+}
+
+async function deleteOrder(orderId) {
+  await Order.findByIdAndDelete(orderId);
+}
+
 module.exports = {
   createOrder,
   placeOrder,
@@ -106,4 +132,7 @@ module.exports = {
   deliverOrder,
   cancelOrder,
   findOrderById,
+  getUserOrderHistory,
+  getAllOrders,
+  deleteOrder,
 };
