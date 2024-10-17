@@ -71,9 +71,78 @@ async function findProductById(productId) {
   return product;
 }
 
+async function getAllProducts(reqQuery) {
+  let {
+    category,
+    carMake,
+    minPrice,
+    maxPrice,
+    minDiscount,
+    sort,
+    stock,
+    pageNumber,
+    pageSize,
+  } = reqQuery;
+
+  pageSize = pageSize || 10;
+
+  let query = await Product.find().populate("category");
+
+  // filter by category if provided
+  if (category) {
+    const categoryExist = await Category.findOne({ name: category });
+    if (categoryExist) {
+      query = query.where("category").equals(categoryExist._id);
+    } else {
+      return { content: [], currentPage: 1, totalPages: 0 };
+    }
+  }
+
+  // Filter by carMake if provided
+  if (carMake) {
+    const carMakesArray = carMake
+      .split(",")
+      .map((make) => make.trim().toLowerCase());
+    query = query.where("specifications.carMake").in(carMakesArray);
+  }
+
+  if (minPrice && maxPrice) {
+    query = query.where("discountedPrice").gte(minPrice).lte(maxPrice);
+  }
+
+  if (minDiscount) {
+    query = query.where("discountPercent").gte(minDiscount);
+  }
+
+  if (stock) {
+    if (stock == "in_stock") {
+      query = query.where("quantity").gt(0);
+    } else if (stock == "out_of_stock") {
+      query = query.where("quantity").equals(0);
+    }
+  }
+
+  if (sort) {
+    const sortDirection = sort == "high_to_low" ? -1 : 1;
+    query = query.sort({ discountedPrice: sortDirection });
+  }
+
+  const totalProducts = await Product.countDocuments(query);
+
+  // pagination
+  const skip = (pageNumber - 1) * pageSize;
+  query = query.skip(skip).limit(pageSize);
+
+  const products = await query.exec();
+  const totalPages = Math.ceil(totalProducts / pageSize);
+
+  return { content: products, currentPage: pageNumber, totalPages: totalPages };
+}
+
 module.exports = {
   createProduct,
   deleteProduct,
   updateProduct,
   findProductById,
+  getAllProducts,
 };
