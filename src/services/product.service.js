@@ -139,10 +139,17 @@ async function getAllProducts(reqQuery) {
   return { content: products, currentPage: pageNumber, totalPages: totalPages };
 }
 
+async function createMultipleProducts(products) {
+  for (const product of products) {
+    await createProduct(product);
+  }
+}
+
 module.exports = {
   createProduct,
   deleteProduct,
   updateProduct,
   findProductById,
   getAllProducts,
+  createMultipleProducts,
 };
