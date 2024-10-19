@@ -20,28 +20,28 @@ const userRouter = require("./routes/user.routes");
 app.use("/api/users", userRouter);
 
 const productRouter = require("./routes/product.routes");
-app.use("/api/products",productRouter);
+app.use("/api/products", productRouter);
 
 const adminProductRouter = require("./routes/adminProduct.routes");
-app.use("/api/admin/products",adminProductRouter);
+app.use("/api/admin/products", adminProductRouter);
 
 const cartRouter = require("./routes/cart.routes");
-app.use("/api/cart",cartRouter);
+app.use("/api/cart", cartRouter);
 
 const cartItemRouter = require("./routes/cartItem.routes");
-app.use("/api/cart_items",cartItemRouter);
+app.use("/api/cart_items", cartItemRouter);
 
 const adminOrderRouter = require("./routes/adminOrder.routes");
-app.use("/api/admin/orders",adminOrderRouter);
+app.use("/api/admin/orders", adminOrderRouter);
 
 const orderRouter = require("./routes/order.routes");
-app.use("/api/orders",orderRouter);
+app.use("/api/orders", orderRouter);
 
 const reviewRouter = require("./routes/review.routes");
-app.use("/api/reviews",reviewRouter);
+app.use("/api/reviews", reviewRouter);
 
 const ratingRouter = require("./routes/rating.routes");
-app.use("/api/ratings",ratingRouter);
+app.use("/api/ratings", ratingRouter);
 
 module.exports = app;
 
