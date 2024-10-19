@@ -4,10 +4,11 @@ const Product = require("../models/product.model");
 async function createProduct(reqData) {
   let firstLevel = await Category.findOne({ name: reqData.firstLevelCategory });
   if (!firstLevel) {
-    firstLevel = Category({
+    firstLevel = new Category({
       name: reqData.firstLevelCategory,
       level: 1,
     });
+    firstLevel = await firstLevel.save();
   }
 
   let secondLevel = await Category.findOne({
@@ -15,11 +16,12 @@ async function createProduct(reqData) {
     parentCategory: firstLevel._id,
   });
   if (!secondLevel) {
-    secondLevel = Category({
+    secondLevel = new Category({
       name: reqData.secondLevelCategory,
       parent: firstLevel._id,
       level: 2,
     });
+    secondLevel = await secondLevel.save();
   }
 
   let thirdLevel = await Category.findOne({
@@ -27,11 +29,12 @@ async function createProduct(reqData) {
     parentCategory: secondLevel._id,
   });
   if (!thirdLevel) {
-    thirdLevel = Category({
+    thirdLevel = new Category({
       name: reqData.thirdLevelCategory,
       parent: secondLevel._id,
       level: 3,
     });
+    thirdLevel = await thirdLevel.save();
   }
 
   const product = new Product({
@@ -88,7 +91,7 @@ async function getAllProducts(reqQuery) {
 
   let query = await Product.find().populate("category");
 
-  // filter by category if provided
+  // Filter by category if provided
   if (category) {
     const categoryExist = await Category.findOne({ name: category });
     if (categoryExist) {

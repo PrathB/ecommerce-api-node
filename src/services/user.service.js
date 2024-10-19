@@ -54,7 +54,7 @@ const getUserProfileByToken = async (token) => {
     const user = await findUserById(userId);
 
     if (!user) {
-      throw new Error("user not found with id: ", userId);
+      throw new Error("User not found with id: ", userId);
     }
     return user;
   } catch (error) {

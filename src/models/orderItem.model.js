@@ -22,7 +22,7 @@ const orderItemSchema = new Schema({
     type: Number,
     required: true,
   },
-  userId: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     required: true,

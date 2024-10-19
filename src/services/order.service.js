@@ -13,7 +13,7 @@ async function createOrder(userId, shippingAddress) {
     address = existingAddress;
   } else {
     address = new Address(shippingAddress);
-    address.userId = userId;
+    address.user = userId;
     await address.save();
     const user = await UserService.findUserById(userId);
     user.address.push(address);
@@ -23,7 +23,7 @@ async function createOrder(userId, shippingAddress) {
   const cart = await CartService.findUserCart(userId);
 
   const order = new Order({
-    userId: userId,
+    user: userId,
     shippingAddress: address,
     totalItems: cart.totalItems,
     subTotalPrice: cart.subTotalPrice,
@@ -36,7 +36,7 @@ async function createOrder(userId, shippingAddress) {
     product: cartItem.product,
     quantity: cartItem.quantity,
     price: cartItem.price,
-    userId: userId,
+    user: userId,
   }));
 
   const createdOrderItems = await OrderItem.insertMany(orderItems);
@@ -91,7 +91,7 @@ async function cancelOrder(orderId) {
 
 async function findOrderById(orderId) {
   const order = await Order.findById(orderId)
-    .populate("userId")
+    .populate("user")
     .populate("shippingAddress")
     .populate({ path: "orderItems", populate: { path: "product" } });
 
@@ -102,7 +102,7 @@ async function findOrderById(orderId) {
 async function getUserOrderHistory(userId) {
   try {
     const orders = await Order.find({
-      userId: userId,
+      user: userId,
       orderStatus: { $in: ["PLACED", "CONFIRMED", "SHIPPED", "DELIVERED"] },
     })
       .populate({ path: "orderItems", populate: { path: "product" } })

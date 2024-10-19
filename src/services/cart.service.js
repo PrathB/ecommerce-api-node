@@ -5,7 +5,7 @@ const Product = require("../models/product.model");
 // function to create cart when user registers
 async function createCart(userId) {
   try {
-    const cart = new Cart({ userId: userId });
+    const cart = new Cart({ user: userId });
     const createdCart = await cart.save();
     return createdCart;
   } catch (error) {
@@ -16,7 +16,7 @@ async function createCart(userId) {
 // function to find user cart and update totalItems,subTotalPrice,shippingCost,totalPrice
 async function findUserCart(userId) {
   try {
-    const cart = await Cart.findOne({ userId: userId });
+    const cart = await Cart.findOne({ user: userId });
     cart.cartItems = await CartItem.find({ cartId: cart._id }).populate(
       "product"
     );
@@ -48,7 +48,7 @@ async function findUserCart(userId) {
 // function to create a cart item from product and add it to cart
 async function addCartItem(userId, req) {
   try {
-    const cart = await Cart.findOne({ userId: userId });
+    const cart = await Cart.findOne({ user: userId });
     const product = await Product.findOne(req.productId);
     if (!product) {
       throw new Error("Invalid product Id: ", req.productId);
@@ -57,7 +57,7 @@ async function addCartItem(userId, req) {
     const isCartItemCreated = await CartItem.findOne({
       cartId: cart._id,
       product: product._id,
-      userId: userId,
+      user: userId,
     });
     if (!isCartItemCreated) {
       // creating cart item
@@ -66,7 +66,7 @@ async function addCartItem(userId, req) {
         product: product._id,
         quantity: req.quantity,
         price: product.discountedPrice * req.quantity,
-        userId: userId,
+        user: userId,
       });
       // adding to cart
       const createdCartItem = await cartItem.save();
