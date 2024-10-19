@@ -13,11 +13,36 @@ app.get("/", (req, res) => {
     .send({ message: "welcome to ecommerce api", status: true });
 });
 
-const authRoutes = require("./routes/auth.route");
-app.use("/auth", authRoutes);
+const authRouter = require("./routes/auth.routes");
+app.use("/auth", authRouter);
 
-const userRoutes = require("./routes/user.route");
-app.use("/api/users", userRoutes);
+const userRouter = require("./routes/user.routes");
+app.use("/api/users", userRouter);
+
+const productRouter = require("./routes/product.routes");
+app.use("/api/products",productRouter);
+
+const adminProductRouter = require("./routes/adminProduct.routes");
+app.use("/api/admin/products",adminProductRouter);
+
+const cartRouter = require("./routes/cart.routes");
+app.use("/api/cart",cartRouter);
+
+const cartItemRouter = require("./routes/cartItem.routes");
+app.use("/api/cart_items",cartItemRouter);
+
+const adminOrderRouter = require("./routes/adminOrder.routes");
+app.use("/api/admin/orders",adminOrderRouter);
+
+const orderRouter = require("./routes/order.routes");
+app.use("/api/orders",orderRouter);
+
+const reviewRouter = require("./routes/review.routes");
+app.use("/api/reviews",reviewRouter);
+
+const ratingRouter = require("./routes/rating.routes");
+app.use("/api/ratings",ratingRouter);
+
 module.exports = app;
 
 app;
