@@ -52,8 +52,8 @@ const cancelOrder = async (req, res) => {
 const deleteOrder = async (req, res) => {
   const orderId = req.params.orderId;
   try {
-    const order = await OrderService.deleteOrder(orderId);
-    return res.status(200).send(order);
+    const message = await OrderService.deleteOrder(orderId);
+    return res.status(200).send({ message: message });
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }

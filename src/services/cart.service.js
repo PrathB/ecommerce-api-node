@@ -72,7 +72,7 @@ async function addCartItem(userId, req) {
       const createdCartItem = await cartItem.save();
       cart.cartItems.push(createdCartItem);
       await cart.save();
-      return "Item added to cart successfully";
+      return createdCartItem;
     }
   } catch (error) {
     throw new Error(error.message);
