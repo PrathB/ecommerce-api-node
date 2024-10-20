@@ -32,6 +32,7 @@ async function findUserCart(userId) {
     }
 
     // shippingCost calculation
+
     totalPrice = subTotalPrice + shippingCost;
 
     cart.totalItems = totalItems;
@@ -39,7 +40,7 @@ async function findUserCart(userId) {
     cart.shippingCost = shippingCost;
     cart.totalPrice = totalPrice;
 
-    return cart;
+    return await cart.save();
   } catch (error) {
     throw new Error(error.message);
   }
@@ -49,7 +50,7 @@ async function findUserCart(userId) {
 async function addCartItem(userId, req) {
   try {
     const cart = await Cart.findOne({ user: userId });
-    const product = await Product.findOne(req.productId);
+    const product = await Product.findById(req.productId);
     if (!product) {
       throw new Error("Invalid product Id: ", req.productId);
     }
@@ -65,7 +66,7 @@ async function addCartItem(userId, req) {
         cartId: cart._id,
         product: product._id,
         quantity: req.quantity,
-        price: product.discountedPrice * req.quantity,
+        price: (product.discountedPrice)*(req.quantity),
         user: userId,
       });
       // adding to cart

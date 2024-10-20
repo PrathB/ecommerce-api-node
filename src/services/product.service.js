@@ -18,7 +18,7 @@ async function createProduct(reqData) {
   if (!secondLevel) {
     secondLevel = new Category({
       name: reqData.secondLevelCategory,
-      parent: firstLevel._id,
+      parentCategory: firstLevel._id,
       level: 2,
     });
     secondLevel = await secondLevel.save();
@@ -31,7 +31,7 @@ async function createProduct(reqData) {
   if (!thirdLevel) {
     thirdLevel = new Category({
       name: reqData.thirdLevelCategory,
-      parent: secondLevel._id,
+      parentCategory: secondLevel._id,
       level: 3,
     });
     thirdLevel = await thirdLevel.save();

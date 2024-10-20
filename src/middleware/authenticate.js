@@ -1,4 +1,3 @@
-const JwtProvider = require("../config/jwtProvider");
 const UserService = require("../services/user.service");
 
 const authenticate = async (req, res, next) => {
@@ -15,4 +14,4 @@ const authenticate = async (req, res, next) => {
   next();
 };
 
-module.exports = { authenticate };
+module.exports = authenticate;

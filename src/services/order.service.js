@@ -9,7 +9,7 @@ async function createOrder(userId, shippingAddress) {
   let address;
   // checking if address already exist in db
   if (shippingAddress._id) {
-    let existingAddress = await Address.findById(shippingAddress._id);
+    const existingAddress = await Address.findOne({user:userId,streetAddress:shippingAddress.streetAddress});
     address = existingAddress;
   } else {
     address = new Address(shippingAddress);
@@ -22,6 +22,7 @@ async function createOrder(userId, shippingAddress) {
 
   const cart = await CartService.findUserCart(userId);
 
+  // creating order from shipping address and cart
   const order = new Order({
     user: userId,
     shippingAddress: address,
@@ -31,6 +32,7 @@ async function createOrder(userId, shippingAddress) {
     totalPrice: cart.totalPrice,
   });
 
+  // creating order items from cart items
   const orderItems = cart.cartItems.map((cartItem) => ({
     orderId: order._id,
     product: cartItem.product,
