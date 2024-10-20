@@ -11,7 +11,7 @@ const updateCartItem = async (req, res) => {
     );
     return res.status(200).send(updatedCartItem);
   } catch (error) {
-    return res.status(500).send({ message: error.message });
+    return res.status(500).send({ error: error.message });
   }
 };
 
@@ -22,7 +22,7 @@ const removeCartItem = async (req, res) => {
     await CartItemService.removeCartItem(user._id, cartItemId);
     return res.status(200).send({ message: "Cart item removed successfully" });
   } catch (error) {
-    return res.status(500).send({ message: error.message });
+    return res.status(500).send({ error: error.message });
   }
 };
 

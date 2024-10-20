@@ -89,13 +89,14 @@ async function getAllProducts(reqQuery) {
 
   pageSize = pageSize || 10;
 
-  let query = await Product.find().populate("category");
+  let query = Product.find().populate("category");
 
   // Filter by category if provided
   if (category) {
-    const categoryExist = await Category.findOne({ name: category });
-    if (categoryExist) {
-      query = query.where("category").equals(categoryExist._id);
+    category = category.replace(/_/g, " ");
+    const existingCategory = await Category.findOne({ name: category });
+    if (existingCategory) {
+      query = query.where("category").equals(existingCategory._id);
     } else {
       return { content: [], currentPage: 1, totalPages: 0 };
     }
@@ -105,7 +106,7 @@ async function getAllProducts(reqQuery) {
   if (carMake) {
     const carMakesArray = carMake
       .split(",")
-      .map((make) => make.trim().toLowerCase());
+      .map((make) => make.trim());
     query = query.where("specifications.carMake").in(carMakesArray);
   }
 

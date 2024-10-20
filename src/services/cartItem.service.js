@@ -12,7 +12,7 @@ async function updateCartItem(userId, cartItemId, cartItemData) {
     // checking if cartItem belongs to user
     if (user._id.toString() === userId.toString()) {
       cartItem.quantity = cartItemData.quantity;
-      cartItem.price = cartItem.quantity * cartItem.product.discountedPrice;
+      cartItem.price = cartItemData.quantity * cartItem.product.discountedPrice;
       const updatedCartItem = await cartItem.save();
       return updatedCartItem;
     } else {
@@ -43,7 +43,7 @@ async function removeCartItem(userId, cartItemId) {
 
 async function findCartItemById(cartItemId) {
   try {
-    const cartItem = await CartItem.findById(cartItemId);
+    const cartItem = await CartItem.findById(cartItemId).populate("product");
     if (!cartItem) {
       throw new Error("Cart item not found with id: ", cartItemId);
     }
