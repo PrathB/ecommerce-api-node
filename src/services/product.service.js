@@ -92,7 +92,7 @@ async function getAllProducts(reqQuery) {
   let query = Product.find().populate("category");
 
   // Filter by category if provided
-  if (category) {
+  if (category && category!="null") {
     category = category.replace(/_/g, " ");
     const existingCategory = await Category.findOne({ name: category });
     if (existingCategory) {
@@ -103,7 +103,7 @@ async function getAllProducts(reqQuery) {
   }
 
   // Filter by carMake if provided
-  if (carMake) {
+  if (carMake && carMake!="null") {
     const carMakesArray = carMake
       .split(",")
       .map((make) => make.trim());
