@@ -92,21 +92,37 @@ async function getAllProducts(reqQuery) {
   let query = Product.find().populate("category");
 
   // Filter by category if provided
-  if (category && category!="null") {
-    category = category.replace(/_/g, " ");
+  if (category && category != "null") {
     const existingCategory = await Category.findOne({ name: category });
     if (existingCategory) {
-      query = query.where("category").equals(existingCategory._id);
+      let level3CategoryIds;
+      if (existingCategory.level === 1) {
+        const level2Categories = await Category.find({
+          parentCategory: existingCategory._id,
+        });
+        const level2CategoryIds = level2Categories.map((cat) => cat._id);
+
+        const level3Categories = await Category.find({
+          parentCategory: { $in: level2CategoryIds },
+        });
+        level3CategoryIds = level3Categories.map((cat) => cat._id);
+      } else if (existingCategory.level === 2) {
+        const level3Categories = await Category.find({
+          parentCategory: existingCategory._id,
+        });
+        level3CategoryIds = level3Categories.map((cat) => cat._id);
+      } else if (existingCategory.level === 3) {
+        level3CategoryIds = existingCategory._id;
+      }
+      query = query.where("category").in(level3CategoryIds);
     } else {
       return { content: [], currentPage: 1, totalPages: 0 };
     }
   }
 
   // Filter by carMake if provided
-  if (carMake && carMake!="null") {
-    const carMakesArray = carMake
-      .split(",")
-      .map((make) => make.trim());
+  if (carMake && carMake != "null") {
+    const carMakesArray = carMake.split(",").map((make) => make.trim());
     query = query.where("specifications.carMake").in(carMakesArray);
   }
 
@@ -138,6 +154,7 @@ async function getAllProducts(reqQuery) {
   query = query.skip(skip).limit(pageSize);
 
   const products = await query.exec();
+
   const totalPages = Math.ceil(totalProducts / pageSize);
 
   return { content: products, currentPage: pageNumber, totalPages: totalPages };
