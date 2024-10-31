@@ -93,9 +93,12 @@ async function getAllProducts(reqQuery) {
 
   // Filter by category if provided
   if (category && category != "null") {
-    const categoriesArray = category
+    let categoriesArray = category
       .split(",")
       .map((category) => category.trim());
+    categoriesArray = categoriesArray.map((str) =>
+      str ? str.replace(/-/g, " ") : ""
+    );
     for (const c of categoriesArray) {
       const existingCategory = await Category.findOne({ name: c });
       if (existingCategory) {
@@ -127,7 +130,10 @@ async function getAllProducts(reqQuery) {
 
   // Filter by carMake if provided
   if (carMake && carMake != "null") {
-    const carMakesArray = carMake.split(",").map((make) => make.trim());
+    let carMakesArray = carMake.split(",").map((make) => make.trim());
+    carMakesArray = carMakesArray.map((str) =>
+      str ? str.replace(/-/g, " ") : ""
+    );
     query = query.where("specifications.carMake").in(carMakesArray);
   }
 
