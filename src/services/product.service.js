@@ -99,10 +99,10 @@ async function getAllProducts(reqQuery) {
     categoriesArray = categoriesArray.map((str) =>
       str ? str.replace(/-/g, " ") : ""
     );
+    let level3CategoryArray = [];
     for (const c of categoriesArray) {
       const existingCategory = await Category.findOne({ name: c });
       if (existingCategory) {
-        let level3CategoryIds;
         if (existingCategory.level === 1) {
           const level2Categories = await Category.find({
             parentCategory: existingCategory._id,
@@ -112,20 +112,22 @@ async function getAllProducts(reqQuery) {
           const level3Categories = await Category.find({
             parentCategory: { $in: level2CategoryIds },
           });
-          level3CategoryIds = level3Categories.map((cat) => cat._id);
+          level3CategoryArray = [...level3CategoryArray, ...level3Categories];
         } else if (existingCategory.level === 2) {
           const level3Categories = await Category.find({
             parentCategory: existingCategory._id,
           });
-          level3CategoryIds = level3Categories.map((cat) => cat._id);
+
+          level3CategoryArray = [...level3CategoryArray, ...level3Categories];
+          console.log(level3CategoryArray);
         } else if (existingCategory.level === 3) {
-          level3CategoryIds = existingCategory._id;
+          level3CategoryArray = [...level3CategoryArray, existingCategory];
         }
-        query = query.where("category").in(level3CategoryIds);
-      } else {
-        return { content: [], currentPage: 1, totalPages: 0 };
       }
     }
+    console.log(level3CategoryArray);
+
+    query = query.where("category").in(level3CategoryArray);
   }
 
   // Filter by carMake if provided
