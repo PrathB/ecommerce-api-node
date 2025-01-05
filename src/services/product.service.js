@@ -125,8 +125,6 @@ async function getAllProducts(reqQuery) {
         }
       }
     }
-    console.log(level3CategoryArray);
-
     query = query.where("category").in(level3CategoryArray);
   }
 

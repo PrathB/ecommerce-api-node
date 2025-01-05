@@ -75,6 +75,9 @@ async function addCartItem(userId, req) {
       await cart.save();
       return createdCartItem;
     }
+    else{
+      throw new Error("Product already in cart");
+    }
   } catch (error) {
     throw new Error(error.message);
   }

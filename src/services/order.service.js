@@ -8,8 +8,12 @@ const OrderItem = require("../models/orderItem.model");
 async function createOrder(userId, shippingAddress) {
   let address;
   // checking if address already exist in db
-  if (shippingAddress._id) {
-    const existingAddress = await Address.findOne({user:userId,streetAddress:shippingAddress.streetAddress});
+
+  const existingAddress = await Address.findOne({
+    user: userId,
+    streetAddress: shippingAddress.streetAddress,
+  });
+  if (existingAddress) {
     address = existingAddress;
   } else {
     address = new Address(shippingAddress);
@@ -47,7 +51,15 @@ async function createOrder(userId, shippingAddress) {
   order.orderItems = orderItems;
   const savedOrder = await order.save();
 
-  return savedOrder;
+  const populatedOrder = await Order.findById(savedOrder._id)
+    .populate("user")
+    .populate("shippingAddress");
+
+  populatedOrder.orderItems = await OrderItem.find({ orderId: order._id }).populate(
+    "product"
+  );
+
+  return populatedOrder;
 }
 
 // for admin
@@ -92,12 +104,20 @@ async function cancelOrder(orderId) {
 }
 
 async function findOrderById(orderId) {
-  const order = await Order.findById(orderId)
-    .populate("user")
-    .populate("shippingAddress")
-    .populate({ path: "orderItems", populate: { path: "product" } });
+  try {
+    const order = await Order.findById(orderId)
+      .populate("user")
+      .populate("shippingAddress");
+    if (order) {
+      order.orderItems = await OrderItem.find({ orderId: order._id }).populate(
+        "product"
+      );
+    }
 
-  return order;
+    return order;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 // fxn for user to view order history
