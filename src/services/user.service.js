@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 const jwtProvider = require("../config/jwtProvider");
+const Address = require("../models/address.model");
 
 const createUser = async (userData) => {
   try {
@@ -56,6 +57,7 @@ const getUserProfileByToken = async (token) => {
     if (!user) {
       throw new Error("User not found with id: ", userId);
     }
+    user.address = await Address.find({user: user._id});
     return user;
   } catch (error) {
     throw new Error(error.message);
