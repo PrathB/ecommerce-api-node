@@ -2,45 +2,15 @@ const Category = require("../models/category.model");
 const Product = require("../models/product.model");
 
 async function createProduct(reqData) {
-  let firstLevel = await Category.findOne({ name: reqData.firstLevelCategory });
-  if (!firstLevel) {
-    firstLevel = new Category({
-      name: reqData.firstLevelCategory,
-      level: 1,
-    });
-    firstLevel = await firstLevel.save();
-  }
-
-  let secondLevel = await Category.findOne({
-    name: reqData.secondLevelCategory,
-    parentCategory: firstLevel._id,
-  });
-  if (!secondLevel) {
-    secondLevel = new Category({
-      name: reqData.secondLevelCategory,
-      parentCategory: firstLevel._id,
-      level: 2,
-    });
-    secondLevel = await secondLevel.save();
-  }
-
-  let thirdLevel = await Category.findOne({
-    name: reqData.thirdLevelCategory,
-    parentCategory: secondLevel._id,
-  });
-  if (!thirdLevel) {
-    thirdLevel = new Category({
-      name: reqData.thirdLevelCategory,
-      parentCategory: secondLevel._id,
-      level: 3,
-    });
-    thirdLevel = await thirdLevel.save();
-  }
-
+  const category = {
+    level1: reqData.category.level1,
+    level2: reqData.category.level2,
+    level3: reqData.category.level3,
+  };
   const product = new Product({
     title: reqData.title,
     imageUrl: reqData.imageUrl,
-    category: thirdLevel,
+    category: category,
     quantity: reqData.quantity,
     price: reqData.price,
     discountedPrice: reqData.discountedPrice,
@@ -89,43 +59,18 @@ async function getAllProducts(reqQuery) {
 
   pageSize = pageSize || 10;
 
-  let query = Product.find().populate("category");
+  let query = Product.find();
 
   // Filter by category if provided
   if (category && category != "null") {
-    let categoriesArray = category
-      .split(",")
-      .map((category) => category.trim());
-    categoriesArray = categoriesArray.map((str) =>
-      str ? str.replace(/-/g, " ") : ""
-    );
-    let level3CategoryArray = [];
-    for (const c of categoriesArray) {
-      const existingCategory = await Category.findOne({ name: c });
-      if (existingCategory) {
-        if (existingCategory.level === 1) {
-          const level2Categories = await Category.find({
-            parentCategory: existingCategory._id,
-          });
-          const level2CategoryIds = level2Categories.map((cat) => cat._id);
-
-          const level3Categories = await Category.find({
-            parentCategory: { $in: level2CategoryIds },
-          });
-          level3CategoryArray = [...level3CategoryArray, ...level3Categories];
-        } else if (existingCategory.level === 2) {
-          const level3Categories = await Category.find({
-            parentCategory: existingCategory._id,
-          });
-
-          level3CategoryArray = [...level3CategoryArray, ...level3Categories];
-          console.log(level3CategoryArray);
-        } else if (existingCategory.level === 3) {
-          level3CategoryArray = [...level3CategoryArray, existingCategory];
-        }
-      }
-    }
-    query = query.where("category").in(level3CategoryArray);
+    category = category.replace(/-/g, " ");
+    query = query.find({
+      $or: [
+        { "category.level1": { $regex: category, $options: "i" } },
+        { "category.level2": { $regex: category, $options: "i" } },
+        { "category.level3": { $regex: category, $options: "i" } },
+      ],
+    });
   }
 
   // Filter by carMake if provided

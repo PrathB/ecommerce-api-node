@@ -10,9 +10,9 @@ const productSchema = new Schema({
     type: String,
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "categories",
-    required: true,
+    level1: { type: String, required: true },
+    level2: { type: String, required: true },
+    level3: { type: String, required: true },
   },
   quantity: {
     type: Number,
