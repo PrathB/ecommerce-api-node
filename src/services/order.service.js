@@ -55,9 +55,9 @@ async function createOrder(userId, shippingAddress) {
     .populate("user")
     .populate("shippingAddress");
 
-  populatedOrder.orderItems = await OrderItem.find({ orderId: order._id }).populate(
-    "product"
-  );
+  populatedOrder.orderItems = await OrderItem.find({
+    orderId: order._id,
+  }).populate("product");
 
   return populatedOrder;
 }
@@ -137,9 +137,14 @@ async function getUserOrderHistory(userId) {
 
 // fxn for admin to get all orders
 async function getAllOrders() {
-  return await Order.find()
-    .populate({ path: "orderItems", populate: { path: "product" } })
-    .lean();
+  const orders = await Order.find().populate("user");
+  for (const order of orders) {
+    order.orderItems = await OrderItem.find({
+      orderId: order._id,
+    }).populate("product");
+  }
+
+  return orders;
 }
 
 async function deleteOrder(orderId) {
