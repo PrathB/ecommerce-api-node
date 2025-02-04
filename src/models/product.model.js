@@ -24,9 +24,11 @@ const productSchema = new Schema({
   },
   discountedPrice: {
     type: Number,
+    required: true,
   },
   discountPercent: {
     type: Number,
+    required: true,
   },
   brand: {
     type: String,
