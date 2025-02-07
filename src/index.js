@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 
 const cors = require("cors");
 
@@ -6,6 +7,13 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+
+
+// Middleware
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from the "uploads" directory
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
   return res

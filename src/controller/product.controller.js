@@ -2,10 +2,20 @@ const ProductService = require("../services/product.service");
 
 const createProduct = async (req, res) => {
   try {
-    const product = await ProductService.createProduct(req.body);
-    return res.status(201).send(product);
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const imageUrl = req.file
+      ? `${baseUrl}/uploads/${req.file.filename}`
+      : req.body.imageUrl;
+
+    const productData = {
+      ...req.body,
+      imageUrl,
+    };
+
+    const product = await ProductService.createProduct(productData);
+    return res.status(201).json(product);
   } catch (error) {
-    return res.status(500).send({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -54,7 +64,7 @@ const getAllProducts = async (req, res) => {
 const createMultipleProducts = async (req, res) => {
   try {
     await ProductService.createMultipleProducts(req.body);
-    return res.status(201).send({message:"Products created successfully"});
+    return res.status(201).send({ message: "Products created successfully" });
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }

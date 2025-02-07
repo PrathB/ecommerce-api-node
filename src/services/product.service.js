@@ -7,6 +7,7 @@ async function createProduct(reqData) {
     level2: reqData.category.level2,
     level3: reqData.category.level3,
   };
+  console.log(reqData.imageUrl);
   const product = new Product({
     title: reqData.title,
     imageUrl: reqData.imageUrl,
