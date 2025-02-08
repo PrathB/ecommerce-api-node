@@ -8,6 +8,7 @@ const productSchema = new Schema({
   },
   imageUrl: {
     type: String,
+    required:true,
   },
   category: {
     level1: { type: String, required: true },

@@ -3,7 +3,18 @@ const ProductService = require("../services/product.service");
 const createProduct = async (req, res) => {
   try {
     const imageUrl = req.file ? req.file.path : null; // Get the Cloudinary image URL
-    const productData = { ...req.body, imageUrl };
+    const productData = {
+      ...req.body,
+      quantity: Number(req.body.quantity),
+      price: Number(req.body.price),
+      discountedPrice: Number(req.body.discountedPrice),
+      discountPercent: Number(req.body.discountPercent),
+      category: JSON.parse(req.body.category),
+      specifications: JSON.parse(req.body.specifications),
+      highlights: JSON.parse(req.body.highlights),
+      compatibility: JSON.parse(req.body.compatibility),
+      imageUrl,
+    };
 
     const product = await ProductService.createProduct(productData);
     return res.status(201).send(product);

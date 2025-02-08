@@ -1,7 +1,5 @@
 const Product = require("../models/product.model");
 const { cloudinary } = require("../config/cloudinaryConfig");
-const fs = require("fs");
-const path = require("path");
 
 async function createProduct(reqData) {
   const category = {
@@ -9,7 +7,6 @@ async function createProduct(reqData) {
     level2: reqData.category.level2,
     level3: reqData.category.level3,
   };
-  console.log(reqData.imageUrl);
   const product = new Product({
     title: reqData.title,
     imageUrl: reqData.imageUrl,
