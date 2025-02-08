@@ -2,20 +2,13 @@ const ProductService = require("../services/product.service");
 
 const createProduct = async (req, res) => {
   try {
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
-    const imageUrl = req.file
-      ? `${baseUrl}/uploads/${req.file.filename}`
-      : req.body.imageUrl;
-
-    const productData = {
-      ...req.body,
-      imageUrl,
-    };
+    const imageUrl = req.file ? req.file.path : null; // Get the Cloudinary image URL
+    const productData = { ...req.body, imageUrl };
 
     const product = await ProductService.createProduct(productData);
-    return res.status(201).json(product);
+    return res.status(201).send(product);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).send({ error: error.message });
   }
 };
 
@@ -23,7 +16,7 @@ const deleteProduct = async (req, res) => {
   const productId = req.params.productId;
   try {
     const message = await ProductService.deleteProduct(productId);
-    return res.status(200).send({ message: message });
+    return res.status(200).send({ message });
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }

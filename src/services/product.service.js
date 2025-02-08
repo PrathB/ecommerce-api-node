@@ -1,5 +1,7 @@
-const Category = require("../models/category.model");
 const Product = require("../models/product.model");
+const { cloudinary } = require("../config/cloudinaryConfig");
+const fs = require("fs");
+const path = require("path");
 
 async function createProduct(reqData) {
   const category = {
@@ -27,8 +29,24 @@ async function createProduct(reqData) {
 }
 
 async function deleteProduct(productId) {
+  const product = await Product.findById(productId);
+  if (!product) {
+    throw new Error("Product not found");
+  }
+
+  if (product.imageUrl) {
+    const imageUrlParts = product.imageUrl.split("/");
+    const publicIdWithExtension = imageUrlParts[imageUrlParts.length - 1];
+    const publicId = `ecommerce-products/${
+      publicIdWithExtension.split(".")[0]
+    }`;
+
+    await cloudinary.uploader.destroy(publicId);
+  }
+
   await Product.findByIdAndDelete(productId);
-  return "Product deleted succesfully";
+
+  return "Product and associated image deleted successfully";
 }
 
 async function updateProduct(productId, reqData) {
