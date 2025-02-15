@@ -60,7 +60,7 @@ async function findProductById(productId) {
   return product;
 }
 
-async function getAllProducts(reqQuery) {
+async function getProducts(reqQuery) {
   let {
     category,
     carMake,
@@ -132,6 +132,11 @@ async function getAllProducts(reqQuery) {
   return { content: products, currentPage: pageNumber, totalPages: totalPages };
 }
 
+async function getAllProducts() {
+  const products = Product.find().sort({ createdAt: -1 });
+  return products;
+}
+
 async function createMultipleProducts(products) {
   for (const product of products) {
     await createProduct(product);
@@ -143,6 +148,7 @@ module.exports = {
   deleteProduct,
   updateProduct,
   findProductById,
+  getProducts,
   getAllProducts,
   createMultipleProducts,
 };

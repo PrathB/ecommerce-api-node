@@ -56,9 +56,18 @@ const findProductById = async (req, res) => {
   }
 };
 
+const getProducts = async (req, res) => {
+  try {
+    const products = await ProductService.getProducts(req.query);
+    return res.status(200).send(products);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
+
 const getAllProducts = async (req, res) => {
   try {
-    const products = await ProductService.getAllProducts(req.query);
+    const products = await ProductService.getAllProducts();
     return res.status(200).send(products);
   } catch (error) {
     return res.status(500).send({ error: error.message });
@@ -79,6 +88,7 @@ module.exports = {
   deleteProduct,
   updateProduct,
   findProductById,
+  getProducts,
   getAllProducts,
   createMultipleProducts,
 };
