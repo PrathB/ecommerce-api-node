@@ -2,13 +2,29 @@ const express = require("express");
 const router = express.Router();
 
 const orderController = require("../controller/adminOrder.controller");
-const authenticate = require("../middleware/authenticate");
+const adminAuthenticate = require("../middleware/adminAuthenticate");
 
-router.get("/", authenticate, orderController.getAllOrders);
-router.put("/:orderId/confirmed",authenticate,orderController.confirmOrder);
-router.put("/:orderId/shipped",authenticate,orderController.shipOrder);
-router.put("/:orderId/delivered",authenticate,orderController.deliverOrder);
-router.put("/:orderId/cancelled",authenticate,orderController.cancelOrder);
-router.delete("/:orderId/delete",authenticate,orderController.deleteOrder);
+router.get("/", adminAuthenticate, orderController.getAllOrders);
+router.put(
+  "/:orderId/confirmed",
+  adminAuthenticate,
+  orderController.confirmOrder
+);
+router.put("/:orderId/shipped", adminAuthenticate, orderController.shipOrder);
+router.put(
+  "/:orderId/delivered",
+  adminAuthenticate,
+  orderController.deliverOrder
+);
+router.put(
+  "/:orderId/cancelled",
+  adminAuthenticate,
+  orderController.cancelOrder
+);
+router.delete(
+  "/:orderId/delete",
+  adminAuthenticate,
+  orderController.deleteOrder
+);
 
 module.exports = router;

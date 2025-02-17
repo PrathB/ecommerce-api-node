@@ -2,18 +2,26 @@ const express = require("express");
 const router = express.Router();
 
 const productController = require("../controller/product.controller");
-const authenticate = require("../middleware/authenticate");
+const adminAuthenticate = require("../middleware/adminAuthenticate");
 const { upload } = require("../config/cloudinaryConfig");
 
-router.get("/", authenticate, productController.getAllProducts);
+router.get("/", adminAuthenticate, productController.getAllProducts);
 router.post(
   "/",
-  authenticate,
+  adminAuthenticate,
   upload.single("image"),
   productController.createProduct
 );
-router.post("/creates", authenticate, productController.createMultipleProducts);
-router.put("/:productId", authenticate, productController.updateProduct);
-router.delete("/:productId", authenticate, productController.deleteProduct);
+router.post(
+  "/creates",
+  adminAuthenticate,
+  productController.createMultipleProducts
+);
+router.put("/:productId", adminAuthenticate, productController.updateProduct);
+router.delete(
+  "/:productId",
+  adminAuthenticate,
+  productController.deleteProduct
+);
 
 module.exports = router;
