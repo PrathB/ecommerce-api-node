@@ -74,6 +74,15 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+const getFeaturedProducts = async (req, res) => {
+  try {
+    const products = await ProductService.getFeaturedProducts();
+    return res.status(200).send(products);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
+
 const createMultipleProducts = async (req, res) => {
   try {
     await ProductService.createMultipleProducts(req.body);
@@ -90,5 +99,6 @@ module.exports = {
   findProductById,
   getProducts,
   getAllProducts,
+  getFeaturedProducts,
   createMultipleProducts,
 };

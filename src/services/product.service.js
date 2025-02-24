@@ -1,5 +1,6 @@
 const Product = require("../models/product.model");
 const { cloudinary } = require("../config/cloudinaryConfig");
+const FeaturedProduct = require("../models/featuredProduct.model");
 
 async function createProduct(reqData) {
   const category = {
@@ -137,6 +138,11 @@ async function getAllProducts() {
   return products;
 }
 
+async function getFeaturedProducts() {
+  const products = FeaturedProduct.find().populate("product");
+  return products;
+}
+
 async function createMultipleProducts(products) {
   for (const product of products) {
     await createProduct(product);
@@ -150,5 +156,6 @@ module.exports = {
   findProductById,
   getProducts,
   getAllProducts,
+  getFeaturedProducts,
   createMultipleProducts,
 };

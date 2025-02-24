@@ -125,10 +125,12 @@ async function getUserOrderHistory(userId) {
   try {
     const orders = await Order.find({
       user: userId,
-      orderStatus: { $in: ["PLACED", "CONFIRMED", "SHIPPED", "DELIVERED"] },
-    })
-      .populate({ path: "orderItems", populate: { path: "product" } })
-      .lean();
+    });
+    for (const order of orders) {
+      order.orderItems = await OrderItem.find({
+        orderId: order._id,
+      }).populate("product");
+    }
     return orders;
   } catch (error) {
     throw new Error(error.message);
