@@ -55,7 +55,7 @@ async function findProductById(productId) {
   const product = await Product.findById(productId);
 
   if (!product) {
-    throw new Error("Product not found with id: ", productId);
+    throw new Error(`Product not found with id: ${productId}`);
   }
 
   return product;
@@ -149,6 +149,30 @@ async function createMultipleProducts(products) {
   }
 }
 
+async function addProductToFeatured(productId) {
+  const productExists = await findProductById(productId);
+
+  const alreadyFeatured = await FeaturedProduct.findOne({ product: productId });
+  if (alreadyFeatured) {
+    throw new Error("Product is already in featured collection");
+  }
+
+  const featuredProduct = new FeaturedProduct({ product: productId });
+  await featuredProduct.save();
+}
+
+async function removeProductFromFeatured(productId) {
+  const productExists = await findProductById(productId);
+  const alreadyFeatured = await FeaturedProduct.findOne({ product: productId });
+  if (!alreadyFeatured) {
+    throw new Error("Product is already not featured");
+  }
+
+  await FeaturedProduct.findOneAndDelete({
+    product: productId,
+  });
+}
+
 module.exports = {
   createProduct,
   deleteProduct,
@@ -158,4 +182,6 @@ module.exports = {
   getAllProducts,
   getFeaturedProducts,
   createMultipleProducts,
+  addProductToFeatured,
+  removeProductFromFeatured,
 };

@@ -92,6 +92,30 @@ const createMultipleProducts = async (req, res) => {
   }
 };
 
+const addProductToFeatured = async (req, res) => {
+  const productId = req.params.productId;
+  try {
+    await ProductService.addProductToFeatured(productId);
+    return res
+      .status(200)
+      .send({ message: "Product added to featured collection successfully" });
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
+
+const removeProductFromFeatured = async (req, res) => {
+  const productId = req.params.productId;
+  try {
+    await ProductService.removeProductFromFeatured(productId);
+    return res.status(200).send({
+      message: "Product removed from featured collection successfully",
+    });
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
+
 module.exports = {
   createProduct,
   deleteProduct,
@@ -101,4 +125,6 @@ module.exports = {
   getAllProducts,
   getFeaturedProducts,
   createMultipleProducts,
+  addProductToFeatured,
+  removeProductFromFeatured,
 };

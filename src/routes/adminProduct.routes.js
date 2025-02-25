@@ -17,6 +17,18 @@ router.post(
   adminAuthenticate,
   productController.createMultipleProducts
 );
+
+router.put(
+  "/featured/:productId",
+  adminAuthenticate,
+  productController.addProductToFeatured
+);
+router.delete(
+  "/featured/:productId",
+  adminAuthenticate,
+  productController.removeProductFromFeatured
+);
+
 router.put("/:productId", adminAuthenticate, productController.updateProduct);
 router.delete(
   "/:productId",
