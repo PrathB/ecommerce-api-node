@@ -26,6 +26,12 @@ async function createProduct(reqData) {
   return await product.save();
 }
 
+async function createMultipleProducts(products) {
+  for (const product of products) {
+    await createProduct(product);
+  }
+}
+
 async function deleteProduct(productId) {
   const product = await Product.findById(productId);
   if (!product) {
@@ -143,10 +149,13 @@ async function getFeaturedProducts() {
   return products;
 }
 
-async function createMultipleProducts(products) {
-  for (const product of products) {
-    await createProduct(product);
-  }
+async function getNonFeaturedProducts() {
+  const featuredProducts = await FeaturedProduct.find().select("product");
+  const featuredProductIds = featuredProducts.map((fp) => fp.product);
+  const nonFeaturedProducts = await Product.find({
+    _id: { $nin: featuredProductIds },
+  });
+  return nonFeaturedProducts;
 }
 
 async function addProductToFeatured(productId) {
@@ -159,6 +168,12 @@ async function addProductToFeatured(productId) {
 
   const featuredProduct = new FeaturedProduct({ product: productId });
   await featuredProduct.save();
+}
+
+async function addMultipleProductsToFeatured(productIds) {
+  for (const id of productIds) {
+    await addProductToFeatured(id);
+  }
 }
 
 async function removeProductFromFeatured(productId) {
@@ -181,7 +196,9 @@ module.exports = {
   getProducts,
   getAllProducts,
   getFeaturedProducts,
+  getNonFeaturedProducts,
   createMultipleProducts,
   addProductToFeatured,
+  addMultipleProductsToFeatured,
   removeProductFromFeatured,
 };

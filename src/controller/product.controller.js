@@ -83,6 +83,15 @@ const getFeaturedProducts = async (req, res) => {
   }
 };
 
+const getNonFeaturedProducts = async (req, res) => {
+  try {
+    const products = await ProductService.getNonFeaturedProducts();
+    return res.status(200).send(products);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
+
 const createMultipleProducts = async (req, res) => {
   try {
     await ProductService.createMultipleProducts(req.body);
@@ -99,6 +108,22 @@ const addProductToFeatured = async (req, res) => {
     return res
       .status(200)
       .send({ message: "Product added to featured collection successfully" });
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
+
+const addMultipleProductsToFeatured = async (req, res) => {
+  try {
+    const { productIds } = req.body;
+    if (!productIds || !Array.isArray(productIds)) {
+      return res.status(400).json({ message: "Invalid product list" });
+    }
+
+    await ProductService.addMultipleProductsToFeatured(productIds);
+    return res
+      .status(200)
+      .send({ message: "Products added to featured collection successfully" });
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
@@ -124,7 +149,9 @@ module.exports = {
   getProducts,
   getAllProducts,
   getFeaturedProducts,
+  getNonFeaturedProducts,
   createMultipleProducts,
   addProductToFeatured,
+  addMultipleProductsToFeatured,
   removeProductFromFeatured,
 };

@@ -18,11 +18,24 @@ router.post(
   productController.createMultipleProducts
 );
 
-router.put(
+router.get(
+  "/non-featured",
+  adminAuthenticate,
+  productController.getNonFeaturedProducts
+);
+
+router.post(
+  "/featured/add-multiple",
+  adminAuthenticate,
+  productController.addMultipleProductsToFeatured
+);
+
+router.post(
   "/featured/:productId",
   adminAuthenticate,
   productController.addProductToFeatured
 );
+
 router.delete(
   "/featured/:productId",
   adminAuthenticate,
