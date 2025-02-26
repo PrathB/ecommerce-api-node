@@ -86,23 +86,31 @@ async function getProducts(reqQuery) {
 
   // Filter by category if provided
   if (category && category != "null") {
-    category = category.replace(/-/g, " ");
-    query = query.find({
-      $or: [
-        { "category.level1": { $regex: category, $options: "i" } },
-        { "category.level2": { $regex: category, $options: "i" } },
-        { "category.level3": { $regex: category, $options: "i" } },
-      ],
-    });
+    let categoryArr = category.split(",").map((cat) => cat.trim());
+    categoryArr = categoryArr.map((str) => (str ? str.replace(/-/g, " ") : ""));
+    query = query
+      .find({
+        $or: [
+          { "category.level1": { $in: categoryArr } },
+          { "category.level2": { $in: categoryArr } },
+          { "category.level3": { $in: categoryArr } },
+        ],
+      })
+      .collation({ locale: "en", strength: 2 });
   }
 
   // Filter by carMake if provided
   if (carMake && carMake != "null") {
-    let carMakesArray = carMake.split(",").map((make) => make.trim());
-    carMakesArray = carMakesArray.map((str) =>
-      str ? str.replace(/-/g, " ") : ""
-    );
-    query = query.where("specifications.carMake").in(carMakesArray);
+    // Step 1: Convert carMake to an array, trim spaces, replace hyphens with spaces, and convert to lowercase
+    let carMakesArray = carMake
+      .split(",")
+      .map((make) => make.trim().replace(/-/g, " ").toLowerCase())
+      .filter(Boolean); // Removes empty strings
+
+    // Step 2: Query with case-insensitive matching
+    query = query.where({
+      $expr: { $in: [{ $toLower: "$specifications.carMake" }, carMakesArray] },
+    });
   }
 
   if (minPrice && maxPrice) {
