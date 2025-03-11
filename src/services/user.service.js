@@ -9,7 +9,7 @@ const createUser = async (userData) => {
     const doesUserExist = await User.findOne({ email });
 
     if (doesUserExist) {
-      throw new Error("User already exists with email: ", email);
+      throw new Error("User already exists with given email");
     }
 
     password = await bcrypt.hash(password, 8);
@@ -37,15 +37,8 @@ const findUserById = async (userId) => {
 };
 
 const getUserByEmail = async (email) => {
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new Error(`User not found with email: ${email}`);
-    }
-    return user;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  const user = await User.findOne({ email });
+  return user;
 };
 
 const getUserProfileByToken = async (token) => {
@@ -57,7 +50,7 @@ const getUserProfileByToken = async (token) => {
     if (!user) {
       throw new Error("User not found with id: ", userId);
     }
-    user.address = await Address.find({user: user._id});
+    user.address = await Address.find({ user: user._id });
     return user;
   } catch (error) {
     throw new Error(error.message);

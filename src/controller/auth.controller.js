@@ -12,7 +12,7 @@ const register = async (req, res) => {
 
     return res.status(200).send({ jwt, message: "Registration Successful" });
   } catch (error) {
-    return res.status(500).send({ error: error.message });
+    return res.status(500).send({ message: error.message });
   }
 };
 
@@ -21,9 +21,7 @@ const login = async (req, res) => {
   try {
     const user = await userService.getUserByEmail(email);
     if (!user) {
-      return res
-        .status(404)
-        .send({ message: "User not found with email: ", email });
+      return res.status(404).send({ message: "User not found"});
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -33,7 +31,7 @@ const login = async (req, res) => {
     const jwt = jwtProvider.generateToken(user._id);
     return res.status(200).send({ jwt, message: "Login Successful" });
   } catch (error) {
-    return res.status(500).send({ error: error.message });
+    return res.status(500).send({ message: error.message });
   }
 };
 
