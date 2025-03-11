@@ -8,7 +8,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 
@@ -19,6 +18,15 @@ app.get("/", (req, res) => {
   return res
     .status(200)
     .send({ message: "welcome to ecommerce api", status: true });
+});
+
+app.get("/ping", (req, res) => {
+  console.log("Ping received at:", new Date().toISOString());
+  res.status(200).send({
+    status: "ok",
+    message: "Server is up and running",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 const authRouter = require("./routes/auth.routes");
