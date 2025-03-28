@@ -3,6 +3,7 @@ const UserService = require("../services/user.service");
 const Address = require("../models/address.model");
 const Order = require("../models/order.model");
 const OrderItem = require("../models/orderItem.model");
+const mongoose = require("mongoose");
 
 // function to create order from user's cart
 async function createOrder(userId, shippingAddress) {
@@ -150,8 +151,25 @@ async function getAllOrders() {
 }
 
 async function deleteOrder(orderId) {
-  await Order.findByIdAndDelete(orderId);
-  return "Order deleted succesfully";
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const order = await Order.findById(orderId);
+    if (!order) {
+      throw new Error("Order not found!");
+    }
+    await OrderItem.deleteMany({ orderId }).session(session);
+    await Order.findByIdAndDelete(orderId).session(session);
+
+    await session.commitTransaction();
+    session.endSession();
+    return "Order deleted succesfully";
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error deleting order:", error.message);
+    throw new Error("Failed to delete order");
+  }
 }
 
 module.exports = {
