@@ -140,7 +140,10 @@ async function getUserOrderHistory(userId) {
 
 // fxn for admin to get all orders
 async function getAllOrders() {
-  const orders = await Order.find().populate("user").sort({ createdAt: -1 });
+  const orders = await Order.find()
+    .populate("user")
+    .populate("shippingAddress")
+    .sort({ createdAt: -1 });
   for (const order of orders) {
     order.orderItems = await OrderItem.find({
       orderId: order._id,
