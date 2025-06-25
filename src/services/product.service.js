@@ -196,6 +196,15 @@ async function removeProductFromFeatured(productId) {
   });
 }
 
+async function searchProducts(query) {
+  const results = await Product.find(
+    { $text: { $search: query } },
+    { score: { $meta: "textScore" } }
+  ).sort({ score: { $meta: "textScore" } });
+
+  return results;
+}
+
 module.exports = {
   createProduct,
   deleteProduct,
@@ -209,4 +218,5 @@ module.exports = {
   addProductToFeatured,
   addMultipleProductsToFeatured,
   removeProductFromFeatured,
+  searchProducts,
 };

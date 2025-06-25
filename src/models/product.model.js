@@ -108,5 +108,15 @@ const productSchema = new Schema({
   },
 });
 
+productSchema.index({
+  title: 'text',
+  'category.level1': 'text',
+  'category.level2': 'text',
+  'category.level3': 'text',
+  brand: 'text',
+  'specifications.carMake': 'text',
+  'specifications.partNumber': 'text',
+});
+
 const Product = mongoose.model("products", productSchema);
 module.exports = Product;
