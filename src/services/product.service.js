@@ -197,12 +197,25 @@ async function removeProductFromFeatured(productId) {
 }
 
 async function searchProducts(query) {
-  const results = await Product.find(
-    { $text: { $search: query } },
-    { score: { $meta: "textScore" } }
-  ).sort({ score: { $meta: "textScore" } });
+  const { q, page = 1, limit = 10 } = query;
+  const skip = (page - 1) * limit;
 
-  return results;
+  const filter = q ? { $text: { $search: q } } : {};
+
+  const [totalResults, results] = await Promise.all([
+    Product.countDocuments(filter),
+    Product.find(filter, { score: { $meta: "textScore" } })
+      .sort({ score: { $meta: "textScore" } })
+      .skip(skip)
+      .limit(limit),
+  ]);
+
+  return {
+    totalResults,
+    currentPage: page,
+    totalPages: Math.ceil(totalResults / limit),
+    products: results,
+  };
 }
 
 module.exports = {

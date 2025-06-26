@@ -142,9 +142,8 @@ const removeProductFromFeatured = async (req, res) => {
 };
 
 const searchProducts = async (req, res) => {
-  const { q } = req.query;
   try {
-    const products = await ProductService.searchProducts(q);
+    const products = await ProductService.searchProducts(req.query);
     return res.status(200).send(products);
   } catch (error) {
     return res.status(500).send({ error: error.message });
